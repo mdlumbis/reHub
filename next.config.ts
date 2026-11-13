@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Cache Components off: keeps data fetching simple (no Suspense required per dynamic page).
+  cacheComponents: false,
   turbopack: {
     rules: {
       "*.css": {

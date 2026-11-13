@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# reHUB
 
-## Getting Started
+Find your rehabilitation team. Built with Next.js, Supabase and Tailwind.
 
-First, run the development server:
+## First-time setup (once, by one person)
+
+1. **GitHub:** create a private repo `rehub`, then from this folder:
+   ```bash
+   git add -A && git commit -m "Initial setup: structure, homepage, login"
+   git branch -M main
+   git remote add origin https://github.com/<you>/rehub.git
+   git push -u origin main
+   ```
+   Repo Settings > Collaborators > invite your teammate.
+2. **Supabase:** create a project at supabase.com. In SQL Editor, run `supabase/migrations/0001_profiles.sql`.
+   For easier testing: Authentication > Sign In / Providers > Email > turn off "Confirm email".
+3. **Vercel:** import the GitHub repo, add the two env vars below, deploy.
+
+## Each developer
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/<you>/rehub.git
+cd rehub
+npm install
+cp .env.example .env.local   # paste the Supabase URL and anon key
+npm run dev                   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The UI runs without Supabase keys; login just shows a "not set up" message.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Test login
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Until registration is built, create users in Supabase: Authentication > Users > Add user, then run:
 
-## Learn More
+```sql
+update public.profiles set role = 'provider', full_name = 'Juan Reyes' where email = 'provider@test.com';
+update auth.users set raw_user_meta_data = raw_user_meta_data || '{"role":"provider"}' where email = 'provider@test.com';
+```
 
-To learn more about Next.js, take a look at the following resources:
+(Users default to `patient`.)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Route | Status |
+|---|---|
+| `/` | Homepage (done) |
+| `/get-started` | Role selection (done) |
+| `/login?role=patient\|provider` | Login (done) |
+| `/register?role=...` | Placeholder |
+| `/search`, `/coverage` | Placeholder |
+| `/patient` | Placeholder, patients only |
+| `/provider` | Placeholder, providers only |
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `CLAUDE.md` for conventions and who owns what.
