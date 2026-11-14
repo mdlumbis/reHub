@@ -122,16 +122,6 @@ function RegisterForm({ role }: { role: Role }) {
     >
       <input type="hidden" name="role" value={role} />
 
-      <Field label="User ID" error={err.username}>
-        <TextInput
-          name="username"
-          placeholder="Choose a unique user ID"
-          autoComplete="username"
-          defaultValue={val("username")}
-          invalid={!!err.username}
-        />
-      </Field>
-
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="First name" error={err.first_name}>
           <TextInput name="first_name" placeholder="First name" autoComplete="given-name" defaultValue={val("first_name")} invalid={!!err.first_name} />
