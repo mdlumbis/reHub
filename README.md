@@ -12,8 +12,9 @@ Find your rehabilitation team. Built with Next.js, Supabase and Tailwind.
    git push -u origin main
    ```
    Repo Settings > Collaborators > invite your teammate.
-2. **Supabase:** create a project at supabase.com. In SQL Editor, run `supabase/migrations/0001_profiles.sql`.
-   For easier testing: Authentication > Sign In / Providers > Email > turn off "Confirm email".
+2. **Supabase:** create a project at supabase.com. In SQL Editor, run every file in `supabase/migrations/` in order.
+   - Authentication > URL Configuration: set **Site URL** to the Vercel URL and add `http://localhost:3000/**` and `https://*-re-hub.vercel.app/**` to **Redirect URLs** (needed for confirmation and reset e-mails).
+   - For easier testing: Authentication > Sign In / Providers > Email > turn off "Confirm email".
 3. **Vercel:** import the GitHub repo, add the two env vars below, deploy.
 
 ## Each developer
@@ -28,27 +29,34 @@ npm run dev                   # http://localhost:3000
 
 The UI runs without Supabase keys; login just shows a "not set up" message.
 
-## Test login
+## Auth flows
 
-Until registration is built, create users in Supabase: Authentication > Users > Add user, then run:
+| Flow | Route |
+|---|---|
+| Choose role | `/get-started` |
+| Sign up (patient / provider tabs) | `/register?role=patient\|provider` |
+| Confirmation e-mail sent | `/register/check-email` |
+| E-mail link lands here | `/auth/confirm` |
+| Log in | `/login?role=patient\|provider` |
+| Forgot / reset password | `/forgot-password` → e-mail → `/reset-password` |
+
+After login: patients → `/`, providers → `/provider` (dashboard).
+
+To mark a provider as verified (until there's an admin screen):
 
 ```sql
-update public.profiles set role = 'provider', full_name = 'Juan Reyes' where email = 'provider@test.com';
-update auth.users set raw_user_meta_data = raw_user_meta_data || '{"role":"provider"}' where email = 'provider@test.com';
+update public.provider_details set verification_status = 'verified'
+where profile_id = (select id from public.profiles where username = 'their.user.id');
 ```
-
-(Users default to `patient`.)
 
 ## Routes
 
 | Route | Status |
 |---|---|
 | `/` | Homepage (done) |
-| `/get-started` | Role selection (done) |
-| `/login?role=patient\|provider` | Login (done) |
-| `/register?role=...` | Placeholder |
-| `/search`, `/coverage` | Placeholder |
-| `/patient` | Placeholder, patients only |
-| `/provider` | Placeholder, providers only |
+| `/get-started`, `/login`, `/register`, password reset | Done |
+| `/provider` | Provider dashboard (done, queue/referrals empty until those tables exist) |
+| `/provider/*` other pages | Placeholder |
+| `/search`, `/coverage`, `/patient` | Placeholder |
 
 See `CLAUDE.md` for conventions and who owns what.
