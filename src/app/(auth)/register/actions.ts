@@ -22,7 +22,6 @@ export async function register(_prev: RegisterState, fd: FormData): Promise<Regi
 
   const v = {
     role,
-    username: text(fd, "username").toLowerCase(),
     first_name: text(fd, "first_name"),
     middle_name: text(fd, "middle_name"),
     last_name: text(fd, "last_name"),
@@ -41,8 +40,6 @@ export async function register(_prev: RegisterState, fd: FormData): Promise<Regi
 
   // ---- Validation -----------------------------------------------------------
   const e: Record<string, string> = {};
-  if (!/^[a-z0-9._]{3,30}$/.test(v.username))
-    e.username = "3–30 characters: lowercase letters, numbers, dots or underscores.";
   if (!v.first_name) e.first_name = "Required.";
   if (!v.last_name) e.last_name = "Required.";
   if (!/^\S+@\S+\.\S+$/.test(v.email)) e.email = "Enter a valid e-mail.";
@@ -74,18 +71,12 @@ export async function register(_prev: RegisterState, fd: FormData): Promise<Regi
   // ---- Sign up --------------------------------------------------------------
   const supabase = await createClient();
 
-  const { data: available } = await supabase.rpc("is_username_available", { p_username: v.username });
-  if (available === false) {
-    return { fieldErrors: { username: "That user ID is taken. Try another." }, values: v };
-  }
-
   const full_name = [v.first_name, v.middle_name, v.last_name].filter(Boolean).join(" ");
   const metadata =
     role === "patient"
       ? {
           role,
           full_name,
-          username: v.username,
           first_name: v.first_name,
           middle_name: v.middle_name,
           last_name: v.last_name,
@@ -97,7 +88,6 @@ export async function register(_prev: RegisterState, fd: FormData): Promise<Regi
       : {
           role,
           full_name,
-          username: v.username,
           first_name: v.first_name,
           middle_name: v.middle_name,
           last_name: v.last_name,
