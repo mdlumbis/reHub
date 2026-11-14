@@ -43,11 +43,19 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Logged-in users don't need the login / sign-up screens.
+  if (user && ["/login", "/register", "/get-started"].includes(path)) {
+    const url = request.nextUrl.clone();
+    url.pathname = user.user_metadata?.role === "provider" ? "/provider" : "/";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   if (guard && user) {
     const role = user.user_metadata?.role;
     if (role && role !== guard.role) {
       const url = request.nextUrl.clone();
-      url.pathname = role === "provider" ? "/provider" : "/patient";
+      url.pathname = role === "provider" ? "/provider" : "/";
       url.search = "";
       return NextResponse.redirect(url);
     }

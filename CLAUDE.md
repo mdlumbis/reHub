@@ -13,22 +13,26 @@ Master's school project built by 2 people. A web app that connects rehabilitatio
 
 ## Ownership (avoid editing the other person's area without asking)
 - **Person A, patient side:** `src/app/(site)/search`, `coverage`, `patient/**`, `(auth)/register` (patient form), clinic profile, appointment booking.
-- **Person B, provider side:** `src/app/(site)/provider/**`, `(auth)/register` (provider form), referrals, fees & coverage.
-- **Shared (change only after agreeing):** `src/components/layout/*`, `src/app/globals.css`, `src/lib/supabase/*`, `src/proxy.ts`, `supabase/migrations/*`, this file.
+- **Person B, provider side:** `src/app/(provider)/provider/**`, `src/lib/provider.ts`, `(auth)/register` (provider form), referrals, fees & coverage.
+- **Shared (change only after agreeing):** `src/components/layout/*`, `src/components/ui/form.tsx`, `src/lib/options.ts`, auth pages (`login`, `register`, password reset), `src/app/globals.css`, `src/lib/supabase/*`, `src/proxy.ts`, `supabase/migrations/*`, this file.
 
 ## Structure
 ```
 src/
   app/
-    (site)/        pages with full nav + footer (home, search, patient, provider...)
-    (auth)/        pages with minimal header (get-started, login, register)
+    (site)/        pages with full nav + footer (home, search, patient...)
+    (auth)/        pages with minimal header (get-started, login, register, forgot/reset password)
+    (provider)/    provider workspace with sidebar (/provider/**)
+    auth/confirm/  landing route for Supabase e-mail links (confirm sign-up, reset password)
     auth/signout/  POST route to log out
   components/
-    layout/        Logo, MainNav, AuthHeader, Footer
-    ui/            reusable UI pieces
+    layout/        Logo, MainNav, AuthHeader, Footer, ProviderSidebar
+    ui/            reusable UI pieces (form.tsx: Field, TextInput, Select, MultiSelect, Notice)
   lib/
     supabase/      client.ts (browser), server.ts (server), proxy.ts (session + route guard)
     constants.ts   static homepage content
+    options.ts     dropdown options (locations, ID types, professions, specializations)
+    provider.ts    provider workspace data (getProviderContext, queue, referrals)
     types.ts       shared types (Role, Profile)
   proxy.ts         runs on every request: refreshes session, protects /patient and /provider
 supabase/migrations/  SQL files, numbered. Never edit an old one; add a new file.
@@ -36,7 +40,7 @@ supabase/migrations/  SQL files, numbered. Never edit an old one; add a new file
 
 ## Conventions
 - Server Components by default. Add `"use client"` only for state, effects, or event handlers.
-- Forms: Server Actions + `useActionState` (see `src/app/(auth)/login`).
+- Forms: Server Actions + `useActionState`. For long forms, submit via `onSubmit` + `startTransition` so fields aren't cleared on validation errors (see `src/app/(auth)/register/RegisterView.tsx`). Validate on the server and return `fieldErrors`.
 - Supabase in server code: `await createClient()` from `@/lib/supabase/server`. In client code: `createClient()` from `@/lib/supabase/client`.
 - Use theme colors only: `brand`, `brand-hover`, `brand-soft`, `brand-mist`, `ink`, `body`, `muted`, `line`, `canvas`. No raw hex in components.
 - Visual style: white cards, `rounded-2xl border border-line`, primary buttons `h-12 rounded-lg bg-brand text-white font-semibold`. Match the Figma mockups.
@@ -46,9 +50,11 @@ supabase/migrations/  SQL files, numbered. Never edit an old one; add a new file
 - Never commit `.env.local`.
 
 ## Roles & auth
-- `profiles.role` is `patient` or `provider`, set at sign-up via `options.data.role`; a DB trigger creates the profile.
-- `/patient/**` requires a patient, `/provider/**` requires a provider (enforced in `src/lib/supabase/proxy.ts`).
-- After login: patients go to `/patient`, providers to `/provider`.
+- Sign-up passes all form fields in `options.data`; the `handle_new_user` DB trigger creates `profiles` + `patient_details` or `provider_details`.
+- `profiles.role` is `patient` or `provider`. `profiles.username` is the "User ID" (unique, lowercase).
+- `/patient/**` requires a patient, `/provider/**` requires a provider; logged-in users are sent away from login/register (all in `src/lib/supabase/proxy.ts`).
+- After login: patients go to `/` (homepage, logged-in nav), providers to `/provider` (dashboard). See `ROLE_HOME` in `src/lib/types.ts`.
+- Providers start with `verification_status = 'pending'`; only an admin (SQL) can change it.
 
 ## Git workflow
 - Never push to `main`. Branch per task: `feat/<screen>`, `fix/<thing>`.
