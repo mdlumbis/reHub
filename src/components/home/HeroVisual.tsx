@@ -8,7 +8,7 @@ import { BadgeCheck, CalendarDays, MapPin } from "lucide-react";
 export function HeroVisual() {
   return (
     <div
-      className="relative hidden h-[216px] w-[326px] shrink-0 overflow-hidden rounded-2xl bg-brand lg:block"
+      className="relative h-[216px] w-[326px] overflow-hidden rounded-2xl bg-brand"
       aria-hidden
     >
       {/* Map: blocks, streets, route */}

@@ -7,6 +7,9 @@ import {
   ShieldCheck,
   Stethoscope,
 } from "lucide-react";
+import { HeroBooking } from "@/components/home/HeroBooking";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { HeroTeam } from "@/components/home/HeroTeam";
 import { HeroVisual } from "@/components/home/HeroVisual";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { COVERAGE_OPTIONS, HERO_STATS, PHILHEALTH_PACKAGES, SPECIALTIES } from "@/lib/constants";
@@ -34,7 +37,10 @@ export default function HomePage() {
               pathologists. The right support for your next step.
             </p>
           </div>
-          <HeroVisual />
+          <HeroCarousel
+            labels={["Find care near you", "Your rehabilitation team", "Book with your coverage"]}
+            slides={[<HeroVisual key="map" />, <HeroTeam key="team" />, <HeroBooking key="booking" />]}
+          />
         </div>
 
         <div className="mt-7">
