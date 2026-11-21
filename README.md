@@ -12,7 +12,7 @@ Find your rehabilitation team. Built with Next.js, Supabase and Tailwind.
    git push -u origin main
    ```
    Repo Settings > Collaborators > invite your teammate.
-2. **Supabase:** create a project at supabase.com. In SQL Editor, run every file in `supabase/migrations/` in order.
+2. **Supabase:** create a project at supabase.com. In SQL Editor, run every file in `supabase/migrations/` in order, then (optional) `supabase/seed/demo_data.sql` for demo providers.
    - Authentication > URL Configuration: set **Site URL** to the Vercel URL and add `http://localhost:3000/**` and `https://*-re-hub.vercel.app/**` to **Redirect URLs** (needed for confirmation and reset e-mails).
    - For easier testing: Authentication > Sign In / Providers > Email > turn off "Confirm email".
 3. **Vercel:** import the GitHub repo, add the two env vars below, deploy.
