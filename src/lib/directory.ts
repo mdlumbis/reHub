@@ -33,6 +33,8 @@ export type SearchResult = {
   earliest_available: string | null;
   min_fee: number | null;
   coverage: string[];
+  /** Not returned by search_providers(); added from public_providers in searchProviders(). */
+  photo_url?: string | null;
 };
 
 export type PublicProvider = {
@@ -114,7 +116,16 @@ export async function searchProviders(params: {
     p_max_km: params.maxKm ?? null,
   });
   if (error) console.error("search_providers failed", error);
-  return data ?? [];
+  const rows: SearchResult[] = data ?? [];
+  if (!rows.length) return rows;
+
+  // Attach profile photos.
+  const { data: photos } = await supabase
+    .from("public_providers")
+    .select("id, photo_url")
+    .in("id", rows.map((r) => r.provider_id));
+  const byId = new Map((photos ?? []).map((p: { id: string; photo_url: string | null }) => [p.id, p.photo_url]));
+  return rows.map((r) => ({ ...r, photo_url: byId.get(r.provider_id) ?? null }));
 }
 
 export type ProviderProfile = {
