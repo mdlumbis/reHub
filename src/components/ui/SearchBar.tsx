@@ -1,6 +1,5 @@
-import { MapPin, Search } from "lucide-react";
-import { LOCATIONS } from "@/lib/options";
-import { shortCity } from "@/lib/format";
+import { Search } from "lucide-react";
+import { LocationPicker } from "./LocationPicker";
 
 /** Name/service + location search. Submits a GET to /search. Used on the homepage and search page. */
 export function SearchBar({
@@ -31,23 +30,7 @@ export function SearchBar({
           className="h-11 w-full bg-transparent text-ink outline-none placeholder:text-muted"
         />
       </label>
-      <label className="flex items-center gap-3 px-3 sm:w-64 sm:border-l sm:border-line">
-        <MapPin className="h-5 w-5 shrink-0 text-brand" />
-        <span className="sr-only">Location</span>
-        <input
-          name="location"
-          list="rehub-locations"
-          defaultValue={defaultLocation ? shortCity(defaultLocation) : undefined}
-          placeholder="Location"
-          autoComplete="off"
-          className="h-11 w-full bg-transparent text-ink outline-none placeholder:text-muted"
-        />
-        <datalist id="rehub-locations">
-          {LOCATIONS.map((l) => (
-            <option key={l} value={l} />
-          ))}
-        </datalist>
-      </label>
+      <LocationPicker name="location" defaultValue={defaultLocation} />
       <button className="h-12 rounded-lg bg-brand px-5 font-semibold text-white hover:bg-brand-hover">Search</button>
     </form>
   );
