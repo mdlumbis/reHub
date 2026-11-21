@@ -14,12 +14,15 @@ export async function bookAppointment(_prev: BookingState, fd: FormData): Promis
   const fullName = String(fd.get("full_name") ?? "").trim();
   const mobile = String(fd.get("mobile") ?? "").replace(/[^\d+]/g, "");
   const reason = String(fd.get("reason") ?? "").trim();
+  const mode = String(fd.get("mode") ?? "");
 
   const e: Record<string, string> = {};
   if (!serviceId) e.service_id = "Choose a service.";
   if (fullName.length < 2) e.full_name = "Enter the patient's full name.";
   if (!/^(\+?63|0)?9\d{9}$/.test(mobile)) e.mobile = "Enter a PH mobile number, e.g. +63 917 123 4567.";
   if (reason.length > 500) e.reason = "Keep it under 500 characters.";
+  if (!["in_person", "home", "online"].includes(mode)) e.mode = "Choose how you'd like to be seen.";
+  if (!slotId) e.slot_id = "Choose a date and time.";
   if (Object.keys(e).length) return { fieldErrors: e };
 
   const normalizedMobile = `+63${mobile.slice(-10)}`;
@@ -33,11 +36,12 @@ export async function bookAppointment(_prev: BookingState, fd: FormData): Promis
     p_full_name: fullName,
     p_mobile: normalizedMobile,
     p_reason: reason || null,
+    p_mode: mode,
   });
 
   if (error || !data) {
     // Messages raised by book_appointment() are written for patients; show them as-is.
-    const known = error?.message && /available|logged in|patient accounts|not offered|accept/.test(error.message);
+    const known = error?.message && /available|logged in|patient accounts|not offered|offer that|accept/.test(error.message);
     if (!known) console.error("book_appointment failed", error);
     return { error: known ? error!.message : "We couldn't book this time. Please try again." };
   }
