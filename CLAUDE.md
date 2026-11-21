@@ -56,6 +56,30 @@ supabase/migrations/  SQL files, numbered. Never edit an old one; add a new file
 - After login: patients go to `/` (homepage, logged-in nav), providers to `/provider` (dashboard). See `ROLE_HOME` in `src/lib/types.ts`.
 - Providers start with `verification_status = 'pending'`; only an admin (SQL) can change it.
 
+## Database (Supabase, see `supabase/migrations/`)
+| Table / function | What it holds | Who can read / write |
+|---|---|---|
+| `profiles` | every user: role, names, username (User ID), contact, location | self |
+| `patient_details` | valid ID type/number (private) | self |
+| `provider_details` | profession, specializations, headline, about, credentials, years, visit_modes, PRC no./expiry, `*_status` verification | self; `*_status` admin only |
+| `public_providers` (view) | safe columns of **verified** providers only | anyone |
+| `clinics`, `provider_clinics` | clinic name/address/lat-lng, which provider practises where + schedule text | anyone reads; provider manages own; `address_verified` admin only |
+| `services` | per-provider services: name, duration, starting fee | anyone reads; provider manages own |
+| `coverage_options`, `provider_coverage` | PhilHealth packages, GL/DSWD, HMOs; which a provider accepts | anyone reads; provider manages own |
+| `locations` | city name → lat/lng (same list as `LOCATIONS` in options.ts) | anyone |
+| `availability_slots` | bookable times (`is_booked`) | anyone reads; provider manages own |
+| `appointments` | bookings: patient, provider, slot, service, coverage, quoted fee, status | patient + provider read; provider updates `status` only |
+| `patient_records` | provider's own patient list (MRN auto) | owner provider; referral recipients read |
+| `referrals` | 7-field referral, `to_profession` and optional `to_provider_id`, status | sender manages drafts; recipient reads |
+| `search_providers(...)` | search + filters + distance ranking + earliest slot + min fee | anyone (rpc) |
+| `book_appointment(...)` / `cancel_appointment(id)` | the only way to create/cancel bookings | logged-in patient / either party |
+| `respond_to_referral(id, accept)` | recipient accepts/declines | recipient |
+
+- Call functions with `supabase.rpc("search_providers", { p_location: "Makati City, Metro Manila" })`.
+- All fees are **starting fees**; always show "final amount set on the day of treatment".
+- Demo data: `supabase/seed/demo_data.sql` (8 verified providers, fake `@demo.rehub.test` emails, can't log in). Re-run it to top up slots for the next 14 days.
+- To verify a provider: `update provider_details set verification_status='verified', prc_status='verified' where profile_id = '...';`
+
 ## Git workflow
 - Never push to `main`. Branch per task: `feat/<screen>`, `fix/<thing>`.
 - Pull `main` before starting. Small commits. Open a PR, the other person reviews, then merge.
