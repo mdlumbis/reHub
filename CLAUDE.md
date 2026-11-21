@@ -72,7 +72,7 @@ supabase/migrations/  SQL files, numbered. Never edit an old one; add a new file
 | `patient_records` | provider's own patient list (MRN auto) | owner provider; referral recipients read |
 | `referrals` | 7-field referral, `to_profession` and optional `to_provider_id`, status | sender manages drafts; recipient reads |
 | `search_providers(...)` | search + filters + distance ranking + earliest slot + min fee | anyone (rpc) |
-| `book_appointment(...)` / `cancel_appointment(id, reason, note)` | the only way to create/cancel bookings. Cancelling records who/when/why; patients can't cancel online within 2 h of the start (`PATIENT_CANCEL_CUTOFF_HOURS` in `src/lib/appointments.ts`) | logged-in patient / either party |
+| `book_appointment(..., p_mode)` / `cancel_appointment(id, reason, note)` | the only way to create/cancel bookings. `p_mode` must be one of the provider's `visit_modes`; slot and service must belong to the same provider. Cancelling records who/when/why; patients can't cancel online within 2 h of the start (`PATIENT_CANCEL_CUTOFF_HOURS` in `src/lib/appointments.ts`) | logged-in patient / either party |
 | `respond_to_referral(id, accept)` | recipient accepts/declines | recipient |
 
 - Call functions with `supabase.rpc("search_providers", { p_location: "Makati City, Metro Manila" })`.

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CalendarX, UserRound } from "lucide-react";
 import { MessageCard } from "@/components/ui/MessageCard";
-import { getProviderProfile, type Slot } from "@/lib/directory";
-import { formatLongDate, formatTime, isPast, VISIT_MODE_LABEL, providerName, shortCity } from "@/lib/format";
+import { getOpenSlots, getProviderProfile, type Slot } from "@/lib/directory";
+import { daysFromNow, isPast, now, providerName, shortCity } from "@/lib/format";
 import { createClient, getCurrentProfile } from "@/lib/supabase/server";
 import { BookingForm } from "./BookingForm";
 
@@ -61,6 +61,8 @@ export default async function BookPage({ params, searchParams }: PageProps<"/pro
 
   const s = slot as Slot;
   const clinic = profile.clinics.find((c) => c.id === s.clinic_id) ?? profile.clinics[0];
+  // Only this provider's open times (next 3 weeks) can be picked on this page.
+  const slots = await getOpenSlots(profile.provider.id, now(), daysFromNow(21));
   const name = providerName(profile.provider);
   const mobile = mine?.contact_number?.replace(/^\+63(\d{3})(\d{3})(\d{4})$/, "+63 $1 $2 $3") ?? "";
 
@@ -75,7 +77,9 @@ export default async function BookPage({ params, searchParams }: PageProps<"/pro
       <p className="mt-3 text-muted">Review your visit and choose how you&apos;ll pay.</p>
 
       <BookingForm
-        slotId={s.id}
+        initialSlotId={s.id}
+        slots={slots.some((x) => x.id === s.id) ? slots : [s, ...slots]}
+        modes={profile.provider.visit_modes.length ? profile.provider.visit_modes : [s.mode]}
         services={profile.services}
         coverage={profile.coverage}
         backHref={profileHref}
@@ -86,9 +90,6 @@ export default async function BookPage({ params, searchParams }: PageProps<"/pro
           address: clinic
             ? `${clinic.name} · ${[clinic.street_address, shortCity(clinic.location)].filter(Boolean).join(", ")}`
             : "",
-          date: formatLongDate(s.starts_at),
-          time: formatTime(s.starts_at),
-          mode: VISIT_MODE_LABEL[s.mode] ?? s.mode,
         }}
       />
     </main>
