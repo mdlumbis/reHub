@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, CalendarDays, Check, ChevronLeft, ChevronRight, MapPin, X } from "lucide-react";
+import { Avatar } from "@/components/ui/Avatar";
 import {
   getLocationCoords,
   getOpenSlots,
@@ -17,7 +18,6 @@ import {
   formatTime,
   daysFromNow,
   formatVisitModes,
-  initials,
   now,
   manilaDateKey,
   providerName,
@@ -79,9 +79,7 @@ export default async function ProviderProfilePage({ params, searchParams }: Page
 
       {/* Header */}
       <section className="mt-6 flex flex-col gap-6 rounded-2xl border border-line bg-white p-6 sm:flex-row">
-        <span className="flex h-36 w-36 shrink-0 items-center justify-center rounded-2xl bg-brand-mist text-4xl font-medium text-brand">
-          {initials(p.first_name, p.last_name)}
-        </span>
+        <Avatar photoUrl={p.photo_url} firstName={p.first_name} lastName={p.last_name} size={144} shape="square" />
         <div className="min-w-0">
           <span className="inline-block rounded-md bg-brand-soft px-2.5 py-1 text-xs text-brand uppercase">
             {p.profession} · Verified on reHUB

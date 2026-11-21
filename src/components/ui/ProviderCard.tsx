@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import type { SearchResult } from "@/lib/directory";
-import { formatKm, formatPeso, formatSlotLabel, formatVisitModes, initials, providerName, shortCity } from "@/lib/format";
+import { formatKm, formatPeso, formatSlotLabel, formatVisitModes, providerName, shortCity } from "@/lib/format";
+import { Avatar } from "./Avatar";
 
 export function ProviderCard({ p, locationParam }: { p: SearchResult; locationParam?: string }) {
   const profileHref = `/providers/${p.username}${locationParam ? `?location=${encodeURIComponent(locationParam)}` : ""}`;
@@ -15,9 +16,7 @@ export function ProviderCard({ p, locationParam }: { p: SearchResult; locationPa
 
   return (
     <article className="flex flex-col gap-6 rounded-2xl border border-line bg-white p-6 sm:flex-row">
-      <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-soft text-xl text-brand">
-        {initials(p.first_name, p.last_name)}
-      </span>
+      <Avatar photoUrl={p.photo_url} firstName={p.first_name} lastName={p.last_name} size={64} />
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-4">

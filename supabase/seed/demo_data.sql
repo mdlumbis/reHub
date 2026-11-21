@@ -2,6 +2,7 @@
 -- Optional. Run AFTER all migrations. Safe to re-run: it skips providers that exist
 -- and tops up open slots for the next 14 days.
 -- Demo accounts can't log in (no password); they only fill search and profiles.
+-- Avatars live in public/avatars/ (generate with: node scripts/generate-avatars.mjs).
 
 do $demo$
 declare
@@ -68,7 +69,8 @@ begin
         prc_status = 'verified',
         parm_status = case when d.profession = 'Physiatrist' then 'verified'::verification_status end,
         philhealth_status = 'verified',
-        verification_status = 'verified'
+        verification_status = 'verified',
+        photo_url = '/avatars/' || (select username from profiles where id = v_id) || '.svg'   -- public/avatars/
       where profile_id = v_id;
 
       -- Clinic (shared if another demo provider already created it)
