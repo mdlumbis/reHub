@@ -76,7 +76,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       .filter((c) => c.kind === kind)
       .map((c) => ({
         value: c.slug,
-        label: kind === "assistance" ? `Accepts ${c.name.toLowerCase()}` : c.short_name,
+        label: kind === "assistance" ? `Accepts ${c.slug === "dswd" ? "DSWD assistance" : c.name.toLowerCase()}` : c.short_name,
         count: count((r) => r.coverage.includes(c.short_name)),
       })),
   });

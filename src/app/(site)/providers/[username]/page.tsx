@@ -95,7 +95,7 @@ export default async function ProviderProfilePage({ params, searchParams }: Page
             <div className="mt-4 flex flex-wrap gap-1.5">
               {coverage.map((c) => (
                 <span key={c.id} className="rounded-full bg-brand-soft px-2.5 py-1 text-xs text-brand">
-                  {c.kind === "philhealth_package" ? `PhilHealth ${c.short_name}` : c.short_name}
+                  {c.kind === "philhealth_package" && !c.short_name.startsWith("PhilHealth") ? `PhilHealth ${c.short_name}` : c.short_name}
                 </span>
               ))}
             </div>
