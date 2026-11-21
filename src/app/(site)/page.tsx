@@ -3,12 +3,11 @@ import {
   Activity,
   ArrowRight,
   Hand,
-  MapPin,
   MessagesSquare,
-  Search,
   ShieldCheck,
   Stethoscope,
 } from "lucide-react";
+import { SearchBar } from "@/components/ui/SearchBar";
 import { COVERAGE_OPTIONS, HERO_STATS, PHILHEALTH_PACKAGES, SPECIALTIES } from "@/lib/constants";
 
 const ICONS = {
@@ -38,30 +37,9 @@ export default function HomePage() {
           <div className="hidden h-[216px] w-[326px] shrink-0 rounded-2xl bg-brand lg:block" aria-hidden />
         </div>
 
-        <form
-          action="/search"
-          className="mt-7 flex flex-col gap-2 rounded-xl border border-line bg-white p-2 sm:flex-row sm:items-center"
-        >
-          <label className="flex flex-1 items-center gap-3 px-3">
-            <Search className="h-5 w-5 text-brand" />
-            <input
-              name="q"
-              placeholder="Search a name, specialization or service"
-              className="h-11 w-full bg-transparent text-ink outline-none placeholder:text-muted"
-            />
-          </label>
-          <label className="flex items-center gap-3 px-3 sm:w-56 sm:border-l sm:border-line">
-            <MapPin className="h-5 w-5 text-brand" />
-            <input
-              name="location"
-              placeholder="Location"
-              className="h-11 w-full bg-transparent text-ink outline-none placeholder:text-muted"
-            />
-          </label>
-          <button className="h-12 rounded-lg bg-brand px-5 font-semibold text-white hover:bg-brand-hover">
-            Search
-          </button>
-        </form>
+        <div className="mt-7">
+          <SearchBar />
+        </div>
 
         <dl className="mt-7 grid grid-cols-2 gap-6 lg:grid-cols-4">
           {HERO_STATS.map((s) => (
@@ -105,13 +83,17 @@ export default function HomePage() {
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           {PHILHEALTH_PACKAGES.map((p) => (
-            <div key={p.name} className="flex gap-4 rounded-2xl border border-line bg-white p-6">
+            <Link
+              key={p.name}
+              href={`/search?coverage=${p.slug}`}
+              className="flex gap-4 rounded-2xl border border-line bg-white p-6 transition hover:border-brand"
+            >
               <ShieldCheck className="h-6 w-6 shrink-0 text-brand" strokeWidth={1.5} />
               <div>
                 <p className="font-semibold text-ink">{p.name}</p>
                 <p className="mt-1 text-sm text-muted">{p.blurb}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -125,11 +107,11 @@ export default function HomePage() {
         <div className="mt-4 flex flex-wrap gap-2">
           {COVERAGE_OPTIONS.map((c) => (
             <Link
-              key={c}
-              href={`/search?coverage=${encodeURIComponent(c)}`}
+              key={c.slug}
+              href={`/search?coverage=${c.slug}`}
               className="rounded-full bg-brand-soft px-3 py-1.5 text-xs text-brand hover:bg-brand-mist"
             >
-              {c}
+              {c.label}
             </Link>
           ))}
         </div>

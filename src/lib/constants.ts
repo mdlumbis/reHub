@@ -8,23 +8,24 @@ export const SPECIALTIES = [
 ] as const;
 
 export const PHILHEALTH_PACKAGES = [
-  { name: "CWD Developmental package", blurb: "Developmental care for children with disabilities" },
-  { name: "CWD Mobility package", blurb: "Support for movement and mobility needs" },
-  { name: "Adult Z Morph package", blurb: "Prosthetic and orthotic rehabilitation support" },
+  { slug: "philhealth-cwd-developmental", name: "CWD Developmental package", blurb: "Developmental care for children with disabilities" },
+  { slug: "philhealth-cwd-mobility", name: "CWD Mobility package", blurb: "Support for movement and mobility needs" },
+  { slug: "philhealth-adult-z-morph", name: "Adult Z Morph package", blurb: "Prosthetic and orthotic rehabilitation support" },
 ];
 
+/** Homepage coverage chips. `slug` matches coverage_options.slug in the database. */
 export const COVERAGE_OPTIONS = [
-  "Accepts guarantee letters",
-  "Accepts DSWD assistance",
-  "Maxicare",
-  "Intellicare",
-  "MediCard",
-  "PhilCare",
-  "ValuCare",
-  "Kaiser International",
-  "Cocolife",
-  "Etiqa",
-  "Pacific Cross",
+  { label: "Accepts guarantee letters", slug: "guarantee-letter" },
+  { label: "Accepts DSWD assistance", slug: "dswd" },
+  { label: "Maxicare", slug: "maxicare" },
+  { label: "Intellicare", slug: "intellicare" },
+  { label: "MediCard", slug: "medicard" },
+  { label: "PhilCare", slug: "philcare" },
+  { label: "ValuCare", slug: "valucare" },
+  { label: "Kaiser International", slug: "kaiser" },
+  { label: "Cocolife", slug: "cocolife" },
+  { label: "Etiqa", slug: "etiqa" },
+  { label: "Pacific Cross", slug: "pacific-cross" },
 ];
 
 /** Placeholder numbers for the hero stats until real counts come from the database. */
