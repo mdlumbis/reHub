@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   Stethoscope,
 } from "lucide-react";
+import { HeroVisual } from "@/components/home/HeroVisual";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { COVERAGE_OPTIONS, HERO_STATS, PHILHEALTH_PACKAGES, SPECIALTIES } from "@/lib/constants";
 
@@ -33,8 +34,7 @@ export default function HomePage() {
               pathologists. The right support for your next step.
             </p>
           </div>
-          {/* Replace with hero image: put the file in /public and use next/image */}
-          <div className="hidden h-[216px] w-[326px] shrink-0 rounded-2xl bg-brand lg:block" aria-hidden />
+          <HeroVisual />
         </div>
 
         <div className="mt-7">
